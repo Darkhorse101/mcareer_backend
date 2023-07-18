@@ -1,0 +1,28 @@
+# Basics
+*.py[cod]
+__pycache__
+*.pyc
+
+# Logs
+logs
+*.log
+pip-log.txt
+npm-debug.log*
+
+# Pycharm
+.idea/*
+
+# npm
+node_modules/
+
+# env file
+config/settings/env.py
+
+# Vscode
+.vscode
+
+# Virtual Env
+.venv/
+.env
+
+*.ipynb
