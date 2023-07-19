@@ -13,9 +13,9 @@ from apps.core.validators import validate_phone_number
 
 from apps.users.manager import UserManager
 
-
+USER_TYPE = [('Employer', 'employer'), ('Jobseeker', 'Jobseeker')]
 class User(AbstractUser, BaseModel):
-    USER_TYPE = [('Employer', 'employer'), ('Jobseeker', 'Jobseeker')]
+    
     
     username = models.CharField(
         _('username'),

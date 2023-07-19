@@ -8,6 +8,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, Pass
 
 from apps.core.serializers import DummySerializer, DynamicFieldsModelSerializer
 from apps.core.validators import validate_attachment
+from apps.users.models import USER_TYPE
 
 USER = get_user_model()
 
@@ -37,6 +38,7 @@ class UserPermissionSerializer(serializers.Serializer):
             except Permission.DoesNotExist:
                 raise serializers.ValidationError(f"Invalid permission codename: {codename}")
         return value
+    
     
 class GroupSerializer(DynamicFieldsModelSerializer):
     permissions = PermissionSerializer(many=True, required=False)
@@ -177,6 +179,7 @@ class UserRegistrationSerializer(DummySerializer):
     full_name = serializers.CharField(write_only=True)
     password = serializers.CharField(write_only=True)
     password2 = serializers.CharField(write_only=True)
+    user_type = serializers.ChoiceField(choices=USER_TYPE)
 
 
     def validate(self, attrs):
@@ -190,6 +193,7 @@ class UserRegistrationSerializer(DummySerializer):
             raise serializers.ValidationError("Password must be at least 8 characters long.", 'password')
 
         return attrs
+    
     
 class UserVerificationSerializer(DummySerializer):
     verification_code = serializers.IntegerField(write_only=True)

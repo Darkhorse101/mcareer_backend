@@ -75,6 +75,7 @@ class UserViewSet(CreateListUpdateDestroyViewSet):
         full_name = request.data.get('full_name')
         password = request.data.get('password')
         password2 = request.data.get('password2')
+        user_type = request.data.get('user_type')
 
         existing_user = USER.objects.filter(email=email).first()
         if existing_user:
@@ -90,7 +91,8 @@ class UserViewSet(CreateListUpdateDestroyViewSet):
         user = USER.objects.create(
             full_name=full_name,
             email=email,
-            password=make_password(password)
+            password=make_password(password),
+            user_type=user_type
         )
         user.verification_code = generate_random_digits(6)
         user.save()
