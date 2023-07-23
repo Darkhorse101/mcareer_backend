@@ -89,7 +89,6 @@ class JobAppledSerializer(DynamicFieldsModelSerializer):
         fields = (
             'id',
             'job',
-            'jobseeker',
             'applied_statues'
         )
 
