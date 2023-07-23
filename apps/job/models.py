@@ -62,6 +62,8 @@ class Training(BaseModel, SlugModel):
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL, null=True)
     created_by = models.ForeignKey(USER, on_delete=models.CASCADE)
+    start_time = models.DateTimeField()
+    end_time = models.DateField()
 
     class Meta:
         indexes = [
@@ -84,14 +86,13 @@ class JobApplied(BaseModel):
         return f'Applied By {self.jobseeker} in {self.job} Job'
 
 
-class TrainingApplied(BaseModel, SlugModel):
+class TrainingApplied(BaseModel):
     jobseeker = models.ForeignKey(USER, on_delete=models.CASCADE)
     training = models.ForeignKey(
         Training, on_delete=models.CASCADE, related_name='training_applications')
     applied_statues = models.CharField(
         choices=APPLIED_STATUSES_CHOICES, max_length=50, default=APPLIED)
-    start_time = models.DateTimeField()
-    end_time = models.DateField()
+    
 
     def __str__(self) -> str:
         return f'Applied By {self.jobseeker} in {self.training} Training'

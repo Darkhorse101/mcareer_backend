@@ -1,7 +1,7 @@
 
 
 from apps.core.serializers import DynamicFieldsModelSerializer
-from apps.job.models import Category, Industry, Job, JobApplied, Training
+from apps.job.models import Category, Industry, Job, JobApplied, Training, TrainingApplied
 from rest_framework import serializers
 
 from apps.users.api.v1.serializers import UserDetailSerializer
@@ -72,7 +72,9 @@ class TrainingSerializer(DynamicFieldsModelSerializer):
             'expiry_date',
             'slug',
             'industry',
-            'category'
+            'category',
+            'start_time',
+            'end_time'
         )
 
 
@@ -83,6 +85,32 @@ class JobAppledSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = JobApplied
+        read_only_fields = ('id', 'jobseeker')
+        fields = (
+            'id',
+            'job',
+            'jobseeker',
+            'applied_statues'
+        )
+
+    def get_fields(self):
+        fields = super().get_fields()
+        if self.request and self.request.method.upper() == 'GET':
+            fields['jobseeker'] = UserDetailSerializer(
+                fields=(
+                    'id', 'full_name', 'email'
+                )
+            )
+        return fields
+    
+
+class TrainingAppledSerializer(DynamicFieldsModelSerializer):
+    job = serializers.PrimaryKeyRelatedField(
+        queryset=Job.objects.all()
+    )
+
+    class Meta:
+        model = TrainingApplied
         read_only_fields = ('id', 'jobseeker')
         fields = (
             'id',
