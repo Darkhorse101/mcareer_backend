@@ -13,6 +13,7 @@ from apps.core.validators import validate_phone_number
 
 from apps.users.manager import UserManager
 
+
 USER_TYPE = [('Employer', 'employer'), ('Jobseeker', 'Jobseeker')]
 class User(AbstractUser, BaseModel):
     
@@ -79,5 +80,16 @@ class User(AbstractUser, BaseModel):
         return self.full_name or self.email
     
 
+
+class WorkExperience(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    job_title = models.CharField(max_length=100)
+    start_year = models.DateField()
+    end_year = models.DateField()
+    is_currently_working = models.BooleanField(default=False)
+    certificate = models.FileField(upload_to='media/certificate', null=True, blank=True)
+
+    def __str__(self) -> str:
+        return f'Work Experience of {self.user}'
 
 

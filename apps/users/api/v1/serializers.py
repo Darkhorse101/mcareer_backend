@@ -12,6 +12,7 @@ from apps.users.models import USER_TYPE
 
 USER = get_user_model()
 
+
 class PermissionSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -30,19 +31,19 @@ class UserPermissionSerializer(serializers.Serializer):
             raise serializers.ValidationError("Invalid user ID")
         return user
 
-
     def validate_permission_codenames(self, value):
         for codename in value:
             try:
                 Permission.objects.get(codename=codename)
             except Permission.DoesNotExist:
-                raise serializers.ValidationError(f"Invalid permission codename: {codename}")
+                raise serializers.ValidationError(
+                    f"Invalid permission codename: {codename}")
         return value
-    
-    
+
+
 class GroupSerializer(DynamicFieldsModelSerializer):
     permissions = PermissionSerializer(many=True, required=False)
-    
+
     class Meta:
         model = Group
         fields = ('name', 'permissions')
@@ -63,10 +64,11 @@ class GroupSerializer(DynamicFieldsModelSerializer):
         instance.save()
         permissions_data = validated_data.get('permissions', [])
         codenames = [item['codename'] for item in permissions_data]
-        instance.permissions.set(Permission.objects.filter(codename__in=codenames))
+        instance.permissions.set(
+            Permission.objects.filter(codename__in=codenames))
 
         return instance
-    
+
 
 class PasswordChangeSerializer(DummySerializer):
     password1 = PasswordField(max_length=20, min_length=5)
@@ -119,7 +121,8 @@ class UserDetailSerializer(DynamicFieldsModelSerializer):
                     UniqueValidator(
                         queryset=USER.objects.all(),
                         lookup='iexact',
-                        message=_("You cannot create account with this email address.")
+                        message=_(
+                            "You cannot create account with this email address.")
                     )
                 ]
             },
@@ -163,7 +166,6 @@ class UserDetailSerializer(DynamicFieldsModelSerializer):
                 )
             })
         return super().validate(attrs)
-    
 
 
 class CustomTokenObtainPairSerializer(DummySerializer, TokenObtainPairSerializer):
@@ -172,8 +174,8 @@ class CustomTokenObtainPairSerializer(DummySerializer, TokenObtainPairSerializer
         data = super().validate(attrs)
         data['user'] = UserDetailSerializer(instance=self.user).data
         return data
-    
-    
+
+
 class UserRegistrationSerializer(DummySerializer):
     email = serializers.EmailField()
     full_name = serializers.CharField(write_only=True)
@@ -181,20 +183,20 @@ class UserRegistrationSerializer(DummySerializer):
     password2 = serializers.CharField(write_only=True)
     user_type = serializers.ChoiceField(choices=USER_TYPE)
 
-
     def validate(self, attrs):
         password1 = attrs.get('password')
         password2 = attrs.get('password2')
-        
+
         if password1 != password2:
             raise serializers.ValidationError("Passwords do not match.")
-    
+
         if len(password1) < 8:
-            raise serializers.ValidationError("Password must be at least 8 characters long.", 'password')
+            raise serializers.ValidationError(
+                "Password must be at least 8 characters long.", 'password')
 
         return attrs
-    
-    
+
+
 class UserVerificationSerializer(DummySerializer):
     verification_code = serializers.IntegerField(write_only=True)
 

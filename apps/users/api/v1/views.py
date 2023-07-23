@@ -61,7 +61,7 @@ class UserViewSet(CreateListUpdateDestroyViewSet):
         user.set_password(password)
         user.save()
         return Response(serializer.data)
-    
+
     @action(
         detail=False,
         methods=['patch'],
@@ -80,12 +80,12 @@ class UserViewSet(CreateListUpdateDestroyViewSet):
         existing_user = USER.objects.filter(email=email).first()
         if existing_user:
             return Response({'error': 'User with this email already exists.'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        
+
         if not email or not password or not password2:
             return Response({'error': 'Email, password, and password2 are required.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = self.get_serializer(UserRegistrationSerializer, data=request.data)
+        serializer = self.get_serializer(
+            UserRegistrationSerializer, data=request.data)
         serializer.is_valid(raise_exception=True)
 
         user = USER.objects.create(
@@ -99,7 +99,6 @@ class UserViewSet(CreateListUpdateDestroyViewSet):
         send_verification_email(user.email, user.verification_code)
 
         return Response({'detail': f'{user.full_name} is created successfully'}, status=status.HTTP_201_CREATED)
-    
 
     @action(
         detail=False,
@@ -112,7 +111,7 @@ class UserViewSet(CreateListUpdateDestroyViewSet):
     def user_me(self, request, *args, **kwargs):
         serializer = UserDetailSerializer(request.user)
         return Response(serializer.data)
-    
+
     @action(
         detail=False,
         methods=['POST'],
@@ -129,9 +128,9 @@ class UserViewSet(CreateListUpdateDestroyViewSet):
             user.is_verified = True
             user.save()
             return Response({'message': 'Successfully Verified'}, status=status.HTTP_200_OK)
-        
+
         return Response({'message': 'Sorry the Pin Code doesnot match'}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     @action(
         detail=False,
         methods=['POST'],
@@ -141,18 +140,18 @@ class UserViewSet(CreateListUpdateDestroyViewSet):
         serializer_class=UserDetailSerializer
     )
     @swagger_auto_schema(
-    request_body=openapi.Schema(
-        type=openapi.TYPE_OBJECT,
-        properties={
-            'email': openapi.Schema(type=openapi.TYPE_STRING)
-        },
-        required=['email']
-    ),
-    responses={
-        200: 'Password reset email sent',
-        # Add more response codes and descriptions as needed
-    }
-)
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'email': openapi.Schema(type=openapi.TYPE_STRING)
+            },
+            required=['email']
+        ),
+        responses={
+            200: 'Password reset email sent',
+            # Add more response codes and descriptions as needed
+        }
+    )
     def forgot_password(self, request, *args, **kwargs):
         data = request.data
         email = USER.objects.get(email=data.get('email'))
@@ -160,5 +159,3 @@ class UserViewSet(CreateListUpdateDestroyViewSet):
         email.save()
         send_forgor_password_email(email.email, email.verification_code)
         return Response({'message': 'Password reset email sent'}, status=status.HTTP_200_OK)
-
-
