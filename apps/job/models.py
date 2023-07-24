@@ -3,6 +3,8 @@ from django.db import models
 from apps.core.models import BaseModel, SlugModel
 from django.contrib.auth import get_user_model
 
+from apps.users.models import UserSKills
+
 USER = get_user_model()
 
 # Choices for applied_statues field
@@ -42,6 +44,7 @@ class Job(BaseModel, SlugModel):
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL, null=True)
     created_by = models.ForeignKey(USER, on_delete=models.CASCADE)
+    skills_required = models.ManyToManyField(UserSKills)
 
     class Meta:
         indexes = [
@@ -106,3 +109,9 @@ class EmployerDetail(models.Model):
     description = models.TextField(null=True, blank=True)
     industry = models.ForeignKey(
         Industry, on_delete=models.SET_NULL, null=True)
+    address = models.CharField(max_length=100)
+    logo = models.FileField(upload_to='logo/', null=True, blank=True)
+
+
+    def __str__(self) -> str:
+        return str(self.company_name)

@@ -100,6 +100,11 @@ class JobAppledSerializer(DynamicFieldsModelSerializer):
                     'id', 'full_name', 'email'
                 )
             )
+            fields['job'] = JobSerializer(
+                fields = (
+                'id', 'title'
+                )
+            )
         return fields
     
 
@@ -123,6 +128,11 @@ class TrainingAppledSerializer(DynamicFieldsModelSerializer):
             fields['jobseeker'] = UserDetailSerializer(
                 fields=(
                     'id', 'full_name', 'email'
+                )
+            )
+            fields['job'] = JobSerializer(
+                fields = (
+                'title'
                 )
             )
         return fields

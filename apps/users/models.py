@@ -15,6 +15,11 @@ from apps.users.manager import UserManager
 
 
 USER_TYPE = [('Employer', 'employer'), ('Jobseeker', 'Jobseeker')]
+
+class UserSKills(BaseModel, SlugModel):
+    name = models.CharField(max_length=100)
+    is_archived = models.BooleanField(default=False)
+
 class User(AbstractUser, BaseModel):
     
     
@@ -70,6 +75,9 @@ class User(AbstractUser, BaseModel):
     
     user_type = models.CharField(choices=USER_TYPE, max_length=25, null=True, blank=True)
 
+    skills = models.ManyToManyField(UserSKills)
+    
+
     objects = UserManager()
 
     EMAIL_FIELD = 'email'
@@ -82,7 +90,7 @@ class User(AbstractUser, BaseModel):
 
 
 class WorkExperience(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='work_experience')
     job_title = models.CharField(max_length=100)
     start_year = models.DateField()
     end_year = models.DateField()
@@ -91,5 +99,8 @@ class WorkExperience(models.Model):
 
     def __str__(self) -> str:
         return f'Work Experience of {self.user}'
+    
+
+
 
 
