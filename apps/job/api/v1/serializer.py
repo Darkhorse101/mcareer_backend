@@ -109,7 +109,7 @@ class JobAppledSerializer(DynamicFieldsModelSerializer):
     
 
 class TrainingAppledSerializer(DynamicFieldsModelSerializer):
-    job = serializers.PrimaryKeyRelatedField(
+    training = serializers.PrimaryKeyRelatedField(
         queryset=Job.objects.all()
     )
 
@@ -118,7 +118,7 @@ class TrainingAppledSerializer(DynamicFieldsModelSerializer):
         read_only_fields = ('id', 'jobseeker')
         fields = (
             'id',
-            'job',
+            'training',
             'applied_statues'
         )
 
@@ -130,7 +130,7 @@ class TrainingAppledSerializer(DynamicFieldsModelSerializer):
                     'id', 'full_name', 'email'
                 )
             )
-            fields['job'] = JobSerializer(
+            fields['training'] = JobSerializer(
                 fields = (
                 'title'
                 )

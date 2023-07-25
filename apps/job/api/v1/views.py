@@ -4,7 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from apps.core.viewsets import CreateListUpdateDestroyViewSet, CreateListUpdateViewSet
-from apps.job.api.v1.serializer import CategorySerializer, IndustrySerializer, JobAppledSerializer, JobSerializer, TrainingSerializer
+from apps.job.api.v1.serializer import CategorySerializer, IndustrySerializer, JobAppledSerializer, JobSerializer, TrainingAppledSerializer, TrainingSerializer
 from apps.job.models import Category, Industry, Job, JobApplied, Training, TrainingApplied
 from apps.job.utils import compute_similarity
 
@@ -87,7 +87,7 @@ class TrainingViewSet(CreateListUpdateDestroyViewSet):
 
 class TrainingAppliedViewset(CreateListUpdateViewSet):
     queryset = TrainingApplied.objects.all()
-    serializer_class = TrainingSerializer
+    serializer_class = TrainingAppledSerializer
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
