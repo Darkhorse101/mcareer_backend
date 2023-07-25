@@ -74,8 +74,37 @@ class TrainingSerializer(DynamicFieldsModelSerializer):
             'industry',
             'category',
             'start_time',
-            'end_time'
+            'end_time',
         )
+
+class TrainingAppledSerializer(DynamicFieldsModelSerializer):
+    training = serializers.PrimaryKeyRelatedField(
+        queryset=Training.objects.all()
+    )
+
+    class Meta:
+        model = TrainingApplied
+        read_only_fields = ('id', 'jobseeker')
+        fields = (
+            'id',
+            'training',
+            'applied_statues'
+        )
+
+    def get_fields(self):
+        fields = super().get_fields()
+        if self.request and self.request.method.upper() == 'GET':
+            fields['jobseeker'] = UserDetailSerializer(
+                fields=(
+                    'id', 'full_name', 'email'
+                )
+            )
+            fields['training'] = TrainingSerializer(
+                fields = (
+                'id', 'title'
+                )
+            )
+        return fields
 
 
 class JobAppledSerializer(DynamicFieldsModelSerializer):
@@ -108,31 +137,3 @@ class JobAppledSerializer(DynamicFieldsModelSerializer):
         return fields
     
 
-class TrainingAppledSerializer(DynamicFieldsModelSerializer):
-    training = serializers.PrimaryKeyRelatedField(
-        queryset=Job.objects.all()
-    )
-
-    class Meta:
-        model = TrainingApplied
-        read_only_fields = ('id', 'jobseeker')
-        fields = (
-            'id',
-            'training',
-            'applied_statues'
-        )
-
-    def get_fields(self):
-        fields = super().get_fields()
-        if self.request and self.request.method.upper() == 'GET':
-            fields['jobseeker'] = UserDetailSerializer(
-                fields=(
-                    'id', 'full_name', 'email'
-                )
-            )
-            fields['training'] = JobSerializer(
-                fields = (
-                'title'
-                )
-            )
-        return fields
