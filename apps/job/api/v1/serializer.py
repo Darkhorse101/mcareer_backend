@@ -1,7 +1,7 @@
 
 
 from apps.core.serializers import DynamicFieldsModelSerializer
-from apps.job.models import Category, Industry, Job, JobApplied, Training, TrainingApplied
+from apps.job.models import Category, EmployerDetail, Industry, Job, JobApplied, Training, TrainingApplied
 from rest_framework import serializers
 
 from apps.users.api.v1.serializers import UserDetailSerializer
@@ -35,6 +35,14 @@ class CategorySerializer(serializers.ModelSerializer):
             'slug'
         )
 
+class EmployerDetailSerializer(DynamicFieldsModelSerializer):
+
+    class Meta:
+        model = EmployerDetail
+        fields = (
+            'company_name', 'pan_vat', 'description', 'address', 'logo'
+        )
+
 
 class JobSerializer(DynamicFieldsModelSerializer):
     industry = serializers.PrimaryKeyRelatedField(
@@ -44,7 +52,7 @@ class JobSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = Job
-        read_only_fields = ('created_at', 'id', 'slug', 'created_by')
+        read_only_fields = ('created_at', 'id', 'slug', 'created_by', 'company')
         fields = (
             'id',
             'title',
@@ -52,8 +60,26 @@ class JobSerializer(DynamicFieldsModelSerializer):
             'expiry_date',
             'slug',
             'industry',
-            'category'
+            'category',
+            'salary',
         )
+
+    def get_fields(self):
+        fields = super().get_fields()
+        if self.request and self.request.method.upper() == 'GET':
+            fields['created_by'] = UserDetailSerializer(
+                fields=(
+                    'id', 'full_name', 'email', 'employer'
+                )
+            )
+            fields['category'] = CategorySerializer(
+               
+            )
+            fields['industry'] = IndustrySerializer()
+
+            fields['company'] = EmployerDetailSerializer()
+
+        return fields
 
 
 class TrainingSerializer(DynamicFieldsModelSerializer):
@@ -76,6 +102,25 @@ class TrainingSerializer(DynamicFieldsModelSerializer):
             'start_time',
             'end_time',
         )
+    
+    def get_fields(self):
+        fields = super().get_fields()
+        if self.request and self.request.method.upper() == 'GET':
+            fields['created_by'] = UserDetailSerializer(
+                fields=(
+                    'id', 'full_name', 'email'
+                )
+            )
+            fields['category'] = CategorySerializer(
+               
+            )
+            fields['industry'] = IndustrySerializer()
+
+            fields['company'] = EmployerDetailSerializer()
+
+            
+        return fields
+    
 
 class TrainingAppledSerializer(DynamicFieldsModelSerializer):
     training = serializers.PrimaryKeyRelatedField(
@@ -104,6 +149,7 @@ class TrainingAppledSerializer(DynamicFieldsModelSerializer):
                 'id', 'title'
                 )
             )
+            
         return fields
 
 

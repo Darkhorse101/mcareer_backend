@@ -45,6 +45,8 @@ class Job(BaseModel, SlugModel):
         Category, on_delete=models.SET_NULL, null=True)
     created_by = models.ForeignKey(USER, on_delete=models.CASCADE)
     skills_required = models.ManyToManyField(UserSKills)
+    salary = models.CharField(max_length=15, null=True, blank=True)
+    company = models.ForeignKey('EmployerDetail', on_delete=models.SET_NULL, null=True)
 
     class Meta:
         indexes = [
@@ -67,6 +69,7 @@ class Training(BaseModel, SlugModel):
     created_by = models.ForeignKey(USER, on_delete=models.CASCADE)
     start_time = models.DateTimeField()
     end_time = models.DateField()
+    company = models.ForeignKey('EmployerDetail', on_delete=models.SET_NULL, null=True)
 
     class Meta:
         indexes = [

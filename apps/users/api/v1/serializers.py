@@ -99,6 +99,7 @@ class UserDetailSerializer(DynamicFieldsModelSerializer):
             'last_login',
             'profile_picture',
             'is_verified',
+            'employer'
         )
         extra_kwargs = {
             'full_name': {
